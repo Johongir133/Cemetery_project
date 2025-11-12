@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: Cemetery_Project
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/cemetery_project
+    username: postgres
+    password: root123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+hashId:
+  salt: "mySecretSaltKey"
+  length: 15
+  alphabet: "abcdefghijklmnopqrstuvwxyz1234567890"
+
+file:
+  upload:
+   folder: C:\Cemetery_file\rasm
