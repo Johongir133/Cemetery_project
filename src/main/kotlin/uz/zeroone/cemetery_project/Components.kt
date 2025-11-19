@@ -13,15 +13,15 @@ class UserLoader(
     private val passwordEncoder: BCryptPasswordEncoder,
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
-        if (!userRepository.existsByUsername("Admin01")) {
+        if (!userRepository.existsByUsernameAndDeletedFalse("DEV")) {
             val defaultPassword = "ABD#3210"
             val devUser = User(
-                "Admin01",
+                "DEV",
                 passwordEncoder.encode(defaultPassword),
-                fullName = "ADMIN",
-                email = "admin01@gmail.com",
+                fullName = "DEV@2025",
+                email = "dev@gmail.com",
                 phoneNumber = "+998901232323",
-                Role.ADMIN,
+                Role.DEV,
             )
             userRepository.save(devUser)
         }

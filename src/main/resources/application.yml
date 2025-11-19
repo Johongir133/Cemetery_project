@@ -13,9 +13,9 @@ spring:
 
 hashId:
   salt: "mySecretSaltKey"
-  length: 15
+  length: 10
   alphabet: "abcdefghijklmnopqrstuvwxyz1234567890"
 
 file:
   upload:
-   folder: C:\Cemetery_file\rasm
+   folder: C:\Cemetery_file\

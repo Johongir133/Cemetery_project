@@ -64,6 +64,18 @@ class UserPhoneLengthInvalidException : CemeteryProjectException() {
 
 class UserPasswordLengthInvalidException : CemeteryProjectException() {
     override fun errorCode(): ErrorCodes {
-        return ErrorCodes.USER_PHONE_LENGTH_INVALID
+        return ErrorCodes.USER_PASSWORD_LENGTH_INVALID
+    }
+}
+
+class DeceasedPersonalIdAlreadyExistsException : CemeteryProjectException() {
+    override fun errorCode(): ErrorCodes {
+        return ErrorCodes.DECEASED_PERSONAL_ID_ALREADY_EXISTS
+    }
+}
+
+class DeceasedPersonalIdSizeInvalid : CemeteryProjectException() {
+    override fun errorCode(): ErrorCodes {
+        return ErrorCodes.DECEASED_PERSONAL_ID_SIZE_INVALID
     }
 }

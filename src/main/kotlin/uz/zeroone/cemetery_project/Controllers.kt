@@ -4,6 +4,7 @@ import jakarta.validation.Valid
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.io.Resource
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -35,9 +36,12 @@ class UserController(
 
     @PreAuthorize("hasAnyAuthority('ADMIN','DEV')")
     @GetMapping
-    fun getAll(pageable: Pageable) = userService.getAll(pageable)
+    fun getAll(
+        @RequestParam(required = false) search: String?,
+        pageable: Pageable,
+    ): Page<UserResponse> = userService.getAll(search, pageable)  // filter search
 
-    @PreAuthorize("hasAnyAuthority('USER','ADMIN','DEV')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DEV')")
     @PutMapping("{id}")
     fun update(@PathVariable id: Long, @RequestBody @Valid request: UserUpdateRequest) = userService.update(id, request)
 
@@ -61,7 +65,10 @@ class DeceasedController(
 
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','DEV')")
     @GetMapping
-    fun getAll(pageable: Pageable) = deceasedService.getAll(pageable)
+    fun getAll(
+        @RequestParam(required = false) search: String?,
+        pageable: Pageable,
+    ): Page<DeceasedResponse> = deceasedService.getAll(search, pageable)
 
     @PreAuthorize("hasAnyAuthority('ADMIN','DEV')")
     @PutMapping("{id}")
@@ -83,19 +90,29 @@ class FilesController(
     @PostMapping("upload")
     fun uploadFile(
         @RequestParam("file") file: MultipartFile,
-        @RequestParam("type") type: FileType
     ): ResponseEntity<FileAssetResponse> {
-        val response = fileService.uploadFile(file, type)
+        val response = fileService.uploadFile(file)
         return ResponseEntity.ok(response)
     }
 
-    @PreAuthorize("hasAnyAuthority('USER','ADMIN','DEV')")
+        @PreAuthorize("hasAnyAuthority('USER','ADMIN','DEV')")
     @GetMapping("download/{hashId}")
     fun downloadFile(@PathVariable hashId: String): ResponseEntity<Resource> {
         return fileService.downloadFile(hashId)
 
     }
 }
+
+@RestController
+@RequestMapping("deceased_with_file")
+class DeceasedWithFileController(
+    private val deceasedWithFileService: DeceasedWithFileService,
+) {
+    @PreAuthorize("hasAnyAuthority('ADMIN','DEV')")
+    @PostMapping("create")
+    fun create(@Valid @RequestBody request: DeceasedWithFileCreateRequest) = deceasedWithFileService.create(request)
+}
+
 @ControllerAdvice
 class GlobalExceptionHandler(
     private val messageSource: ResourceBundleMessageSource,

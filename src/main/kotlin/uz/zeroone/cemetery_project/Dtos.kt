@@ -29,10 +29,10 @@ data class AuthRegisterRequest(
     val username: String,
     @field:Size(min = 8, max = 16, message = "{USER_PASSWORD_LENGTH_INVALID}")
     val password: String,
-    val fullName: String,
-    val email: String,
+    val fullName: String?,
+    val email: String?,
     @field:Size(min = 9, max = 13, message = "{USER_PHONE_LENGTH_INVALID}")
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val role: Role? = Role.USER,
 )
 
@@ -40,10 +40,10 @@ data class UserCreateRequest(
     val username: String,
     @field:Size(min = 8, max = 16, message = "{USER_PASSWORD_LENGTH_INVALID}")
     val password: String,
-    val fullName: String,
-    val email: String,
+    val fullName: String?,
+    val email: String?,
     @field:Size(min = 9, message = "{USER_PHONE_LENGTH_INVALID}")
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val role: Role? = Role.USER,
 ) {
     fun toEntity(): User {
@@ -60,18 +60,22 @@ data class UserCreateRequest(
 
 data class UserResponse(
     val id: Long,
-    val fullName: String,
-    val email: String,
-    val phoneNumber: String,
+    val username: String,
+    val fullName: String? = null,
+    val email: String? = null,
+    val phoneNumber: String? = null,
+    val role: Role? = Role.USER,
 ) {
     companion object {
         fun toResponse(user: User): UserResponse {
             user.run {
                 return UserResponse(
                     id = user.id!!,
+                    username = user.username,
                     fullName = user.fullName,
                     email = user.email,
-                    phoneNumber = user.phoneNumber
+                    phoneNumber = user.phoneNumber,
+                    role = user.role
                 )
             }
 
@@ -96,6 +100,8 @@ data class DeceasedCreateRequest(
     @JsonFormat(pattern = "dd.MM.yyyy")
     val deathDate: LocalDate,
     val biography: String,
+    @field:Size(min = 14, max = 14, message = "{DECEASED_PERSONAL_ID_SIZE_INVALID}")
+    val personalId: String,
 ) {
     fun toEntity(): Deceased {
         return Deceased(
@@ -103,9 +109,15 @@ data class DeceasedCreateRequest(
             birthDate = birthDate,
             deathDate = deathDate,
             biography = biography,
+            personalId = personalId
         )
     }
 }
+
+data class DeceasedFile(
+    val hashId: String,
+    val type: String,
+)
 
 data class DeceasedResponse(
     val id: Long,
@@ -115,9 +127,12 @@ data class DeceasedResponse(
     @JsonFormat(pattern = "dd.MM.yyyy")
     val deathDate: LocalDate?,
     val biography: String,
-) {
+    val personalId: String,
+    val files: List<DeceasedFile>,
+
+    ) {
     companion object {
-        fun toResponse(deceased: Deceased): DeceasedResponse {
+        fun toResponse(deceased: Deceased, file: List<FileAsset>?): DeceasedResponse {
             deceased.run {
                 return DeceasedResponse(
                     id = id!!,
@@ -125,6 +140,10 @@ data class DeceasedResponse(
                     birthDate = birthDate,
                     deathDate = deathDate,
                     biography = biography,
+                    personalId = personalId,
+                    files = file?.map { file ->
+                        DeceasedFile(hashId = file.hashId, type = file.type.name)
+                    } ?: emptyList()
                 )
 
             }
@@ -139,6 +158,8 @@ data class DeceasedUpdateRequest(
     @JsonFormat(pattern = "dd.MM.yyyy")
     var deathDate: LocalDate?,
     var biography: String?,
+    @field:Size(min = 14, max = 14, message = "{DECEASED_PERSONAL_ID_SIZE_INVALID}")
+    var personalId: String?,
 )
 
 data class FileAssetResponse(
@@ -156,16 +177,21 @@ data class FileAssetResponse(
 
 data class DeceasedWithFileCreateRequest(
     val deceasedId: Long,
-    val hashId: String,
+    val hashId: List<String>?,
+    val deceasedFileType: DeceasedFileType,
 )
 
 data class DeceasedWithFileResponse(
-    val hashId: String,
+    val deceasedId: Long,
+    val hashId: String?,
+    val deceasedFileType: DeceasedFileType,
 ) {
     companion object {
-        fun toResponse(deceasedWithFile:DeceasedWithFile): DeceasedWithFileResponse =
+        fun toResponse(deceasedWithFile: DeceasedWithFile): DeceasedWithFileResponse =
             DeceasedWithFileResponse(
-                hashId = deceasedWithFile.image.hashId
+                deceasedId = deceasedWithFile.deceased.id!!,
+                hashId = deceasedWithFile.image.hashId,
+                deceasedFileType = deceasedWithFile.type
             )
     }
 }

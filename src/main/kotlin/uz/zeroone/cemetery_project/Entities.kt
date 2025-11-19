@@ -23,18 +23,19 @@ class BaseEntity(
 class User(
     @Column(nullable = false, unique = true) var username: String,
     @Column(nullable = false) var password: String,
-    var fullName: String,
-    @Column(nullable = false, unique = true) var email: String,
-    @Column(nullable = false, unique = true) var phoneNumber: String,
+    @Column(nullable = true) var fullName: String? = null,
+    @Column(unique = true, nullable = true) var email: String? = null,
+    @Column(unique = true, nullable = true) var phoneNumber: String? = null,
     @Enumerated(EnumType.STRING) val role: Role? = Role.USER,
 ) : BaseEntity()
 
 @Entity
 class Deceased(
     @Column(nullable = false) var fullName: String,
-    val birthDate: LocalDate,
-    val deathDate: LocalDate,
-    val biography: String,
+    var birthDate: LocalDate,
+    var deathDate: LocalDate,
+    var biography: String,
+    @Column(nullable = false, unique = true, length = 14) var personalId: String,
 ) : BaseEntity()
 
 
@@ -45,7 +46,7 @@ class FileAsset(
     var contentType: String,
     var name: String,
     @Column(nullable = false) @Enumerated(value = EnumType.STRING) var type: FileType,
-    @Column(unique = true, length = 15) var hashId: String,
+    @Column(unique = true, length = 10) var hashId: String,
 ) : BaseEntity()
 
 

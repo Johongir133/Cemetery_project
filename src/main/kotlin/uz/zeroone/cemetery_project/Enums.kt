@@ -5,8 +5,9 @@ enum class Role {
 }
 
 enum class FileType {
-    IMAGE, VIDEO, DOCUMENT, OTHER
+    IMAGE, PDF, WORD, UNKNOWN
 }
+
 enum class ErrorCodes(val code: Int) {
     USER_NOT_FOUND(101),
     USERNAME_ALREADY_EXISTS(102),
@@ -16,8 +17,11 @@ enum class ErrorCodes(val code: Int) {
     USER_PHONE_ALREADY_EXISTS(106),
     DECEASED_NOT_FOUND(107),
     FILE_NOT_FOUND(108),
+    DECEASED_PERSONAL_ID_SIZE_INVALID(110),
+    DECEASED_PERSONAL_ID_ALREADY_EXISTS(109),
 
 }
+
 enum class DeceasedFileType {
-    PHOTO,PASSPORT,DIPLOMA,OTHER
+    PHOTO, PASSPORT, DIPLOMA,UNKNOWN
 }

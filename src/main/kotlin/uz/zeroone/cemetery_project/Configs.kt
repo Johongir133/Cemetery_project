@@ -3,6 +3,7 @@ package uz.zeroone.cemetery_project
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.support.ResourceBundleMessageSource
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
@@ -32,6 +33,7 @@ class SecurityConfiguration(
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it.requestMatchers("/auth/register").permitAll()
+                it.requestMatchers(HttpMethod.GET,"/files/download/**").permitAll()
                 it.anyRequest().authenticated()
             }
             .authenticationManager(authenticationManager)
